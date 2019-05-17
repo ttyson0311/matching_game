@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Matching Game 💪</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Amatic+SC"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+  <body>
+    <style>
+      body {
+        margin: 0;
+        background: #f4fd30;
+      }
+      .container {
+        min-height: 100vh;
+        overflow: hidden;
+        display: flex;
+      }
+
+      .game {
+        margin: auto;
+        width: 1092px;
+        height: 545px;
+        display: flex;
+        flex-wrap: wrap;
+        border: 2px solid black;
+      }
+
+      .cards {
+        background: #3930fd;
+        width: 180px;
+        height: 180px;
+        border: 1px solid black;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+      }
+      .bunny-img {
+        background-image: url("bunny.svg");
+      }
+
+      .cat-img {
+        background-image: url("cat.svg");
+      }
+
+      .dog-img {
+        background-image: url("dog.svg");
+      }
+
+      .bird-img {
+        background-image: url("bird.svg");
+      }
+
+      .duck-img {
+        background-image: url("duck.svg");
+      }
+
+      .cow-img {
+        background-image: url("cow.svg");
+      }
+
+      .sheep-img {
+        background-image: url("sheep.svg");
+      }
+
+      .pig-img {
+        background-image: url("pig.svg");
+      }
+
+      .snake-img {
+        background-image: url("snake.svg");
+      }
+      .overlay {
+        width: 180px;
+        height: 180px;
+        border: 1px solid black;
+        display: flex;
+        background-color: #308efd;
+        position: fixed;
+      }
+
+      .overlay.flipped {
+        display: none;
+      }
+
+      h1 {
+        position: absolute;
+        margin: auto;
+        left: 550px;
+        color: #308efd;
+        display: none;
+      }
+    </style>
+
+    <div>
+      <div class="container">
+        <h1>You Win!</h1>
+        <div class="game">
+          <div class=" cards bunny-img">
+            <div class="overlay" data-framework="bunny"></div>
+          </div>
+          <div class="cards cat-img">
+            <div class="overlay" data-framework="cat"></div>
+          </div>
+          <div class="cards bird-img ">
+            <div class="overlay" data-framework="bird"></div>
+          </div>
+          <div class="cards cow-img ">
+            <div class="overlay cow" data-framework="cow"></div>
+          </div>
+          <div class="cards sheep-img ">
+            <div class="overlay" data-framework="sheep"></div>
+          </div>
+          <div class="cards dog-img ">
+            <div class="overlay" data-framework="dog"></div>
+          </div>
+          <div class="cards pig-img ">
+            <div class="overlay" data-framework="pig"></div>
+          </div>
+          <div class="cards duck-img">
+            <div class="overlay" data-framework="duck"></div>
+          </div>
+          <div class="cards sheep-img">
+            <div class="overlay" data-framework="sheep"></div>
+          </div>
+          <div class="cards snake-img ">
+            <div class="overlay" data-framework="snake"></div>
+          </div>
+          <div class="cards bunny-img ">
+            <div class="overlay" data-framework="bunny"></div>
+          </div>
+          <div class="cards dog-img ">
+            <div class="overlay" data-framework="dog"></div>
+          </div>
+          <div class="cards pig-img ">
+            <div class="overlay" data-framework="pig"></div>
+          </div>
+          <div class="cards bird-img ">
+            <div class="overlay" data-framework="bird"></div>
+          </div>
+          <div class="cards cow-img ">
+            <div class="overlay cow" data-framework="cow"></div>
+          </div>
+          <div class="cards snake-img">
+            <div class="overlay" data-framework="snake"></div>
+          </div>
+          <div class="cards cat-img ">
+            <div class="overlay" data-framework="cat"></div>
+          </div>
+          <div class="cards duck-img">
+            <div class="overlay" data-framework="duck"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const overlay = document.querySelectorAll(".overlay");
+      const winner = document.querySelector("h1");
+
+      //create a variable and set it to false
+      let hasFlippedCard = false;
+      //create a variable to lock the board and set to false
+      let lockBoard = false;
+      // create variables for first and second cards
+      let firstCard, secondCard;
+
+      //loop through each card, once it's clicked exdecute displayCard function
+      overlay.forEach(cards => cards.addEventListener("click", displayCard));
+
+      //once card clicked add the flipped class which turns the card over.
+      function displayCard() {
+        // if lockboard is true return the function and do not flip over the card
+        if (lockBoard) return;
+        this.classList.add("flipped");
+        // hasFlippedCard is changed to true.. if true hasflippedcard = true and assign first card to item. return immediately so the function stops.
+        if (!hasFlippedCard) {
+          hasFlippedCard = true;
+          firstCard = this;
+          return;
+        }
+        //once second card is clicked it's assigned to the second card and changing hasFlippedCard back to false.
+        secondCard = this;
+        hasFlippedCard = false;
+        //once both cards have been assigned run the checkForMatch function
+        checkForMatch();
+      }
+
+      function checkForMatch() {
+        //compare variables using the dataset assigned in CSS to see if theres a match. once it's a match disable the card and return the function
+        if (firstCard.dataset.framework === secondCard.dataset.framework) {
+          disableCard();
+          return;
+        }
+        //run unflipcard function
+
+        unflipCard();
+      }
+      let matches = [];
+
+      function disableCard() {
+        //remove event listeners for both cards so can no longer  click
+        firstCard.removeEventListener("click", displayCard);
+        secondCard.removeEventListener("click", displayCard);
+        // firstCard.classList.add("match");
+        // secondCard.classList.add("match");
+        matches.push(firstCard);
+        matches.push(secondCard);
+        console.log(matches);
+        youWin();
+        resetBoard();
+      }
+
+      function unflipCard() {
+        lockBoard = true;
+        setTimeout(() => {
+          //remove "flipped" classlist
+          firstCard.classList.remove("flipped");
+          secondCard.classList.remove("flipped");
+          resetBoard();
+        }, 1000);
+      }
+
+      function youWin() {
+        if (matches.length === 18) {
+          winner.style.display = "initial";
+        }
+      }
+
+      function resetBoard() {
+        [hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+      }
+
+      //Wrapping funciton in paranthesis and placing () directly after the function turns it into IIFE - Immediately Invoked Function Expression, to execute directly after it's declared
+    </script>
+  </body>
+</html>
